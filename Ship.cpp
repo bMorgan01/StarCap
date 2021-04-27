@@ -105,8 +105,5 @@ void Ship::setTarget(Ship *_target) {
 }
 
 void Ship::addWeapon(Weapon *w) {
-    Weapon *copiedWeapon;
-    *copiedWeapon = *w;
-
-    weapons.push_back(copiedWeapon);
+    weapons.push_back(w);
 }

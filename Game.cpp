@@ -18,26 +18,26 @@
 #include "Collision.h"
 #include "BeamWeapon.h"
 
-std::vector<std::string> open(const std::string& path) {
+std::vector<std::string> open(const std::string &path) {
     std::vector<std::string> files;
 
     DIR *dir;
     struct dirent *ent;
-    if ((dir = opendir (path.c_str())) != NULL) {
+    if ((dir = opendir(path.c_str())) != NULL) {
         /* print all the files and directories within directory */
-        while ((ent = readdir (dir)) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
             files.emplace_back(ent->d_name);
         }
-        closedir (dir);
+        closedir(dir);
     } else {
         /* could not open directory */
-        perror ("");
+        perror("");
     }
 
     return files;
 }
 
-std::string wordWrap(const std::string& text, float length, const sf::Font& font, unsigned int charSize) {
+std::string wordWrap(const std::string &text, float length, const sf::Font &font, unsigned int charSize) {
     std::istringstream iss(text);
     std::vector<std::string> results((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
 
@@ -47,7 +47,7 @@ std::string wordWrap(const std::string& text, float length, const sf::Font& font
 
     std::string tempStr;
     std::string returnStr;
-    for (const std::string& s : results) {
+    for (const std::string &s : results) {
         tempStr += s + " ";
         temp.setString(tempStr);
         if (temp.getGlobalBounds().width < length) returnStr += s + " ";
@@ -60,7 +60,7 @@ std::string wordWrap(const std::string& text, float length, const sf::Font& font
     return returnStr;
 }
 
-std::vector<std::string> readFileLines(const std::string& path) {
+std::vector<std::string> readFileLines(const std::string &path) {
     std::vector<std::string> lines;
     std::ifstream inFile(path);
 
@@ -80,7 +80,7 @@ std::vector<std::string> readFileLines(const std::string& path) {
     return lines;
 }
 
-template< class T, class RNG >
+template<class T, class RNG>
 T pickRandomItem(std::vector<T> items, RNG &gen) {
     int index = std::uniform_int_distribution<int>(0, items.size() - 1)(gen);
 
@@ -91,34 +91,34 @@ void Game::init() {
     const int DESC = 0, YARD = 1, TASKS = 2;
     int planetScreen = DESC;
 
-    std::vector < GameSprite * > objects;
-    std::vector < Shootable * > projectiles;
-    std::vector < COMShip * > ships;
-    std::vector < System * > systems;
-    std::vector < GameSprite * > mapSprites;
-    std::vector < sf::Vertex * > mapLines;
+    std::vector<GameSprite *> objects;
+    std::vector<Shootable *> projectiles;
+    std::vector<COMShip *> ships;
+    std::vector<System *> systems;
+    std::vector<GameSprite *> mapSprites;
+    std::vector<sf::Vertex *> mapLines;
 
-    std::vector < sf::Texture * > planets;
-    std::vector < sf::Texture * > stars;
-    std::vector < sf::Texture * > images;
+    std::vector<sf::Texture *> planets;
+    std::vector<sf::Texture *> stars;
+    std::vector<sf::Texture *> images;
 
-    std::vector < sf::Texture * > shipTextures;
+    std::vector<sf::Texture *> shipTextures;
     std::vector<int> shipTextureScales;
 
-    std::deque < sf::Text * > messageLog;
+    std::deque<sf::Text *> messageLog;
 
-    std::vector < GameSprite * > shipyardMenu;
-    std::vector < sf::Text * > shipyardMenuText;
+    std::vector<GameSprite *> shipyardMenu;
+    std::vector<sf::Text *> shipyardMenuText;
 
-    std::vector < sf::Text * > missions;
-    std::vector < sf::Text * > missionSizes;
-    std::vector < sf::Text * > missionAccepts;
-    std::vector < GameSprite * > missionButtons;
-    std::vector < sf::RectangleShape * > missionButtonFilters;
+    std::vector<sf::Text *> missions;
+    std::vector<sf::Text *> missionSizes;
+    std::vector<sf::Text *> missionAccepts;
+    std::vector<GameSprite *> missionButtons;
+    std::vector<sf::RectangleShape *> missionButtonFilters;
 
-    std::vector < Task * > activeMissions;
+    std::vector<Task *> activeMissions;
 
-    std::vector < Explore * > explores;
+    std::vector<Explore *> explores;
 
     sf::RenderWindow window(sf::VideoMode(1240, 640), "Star Captain");
     sf::View mainView;
@@ -338,8 +338,8 @@ void Game::init() {
         systems[systems.size() - 1]->setGovName(input);
         std::getline(inFile, input);
         std::istringstream iss(input);
-        std::vector <std::string> results((std::istream_iterator<std::string>(iss)),
-                                          std::istream_iterator<std::string>());
+        std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
+                                         std::istream_iterator<std::string>());
         systems[systems.size() - 1]->setPop(stoi(results[0]));
         systems[systems.size() - 1]->setStren(stoi(results[1]));
         std::getline(inFile, input);
@@ -354,7 +354,8 @@ void Game::init() {
             iss = std::istringstream(input);
             results = std::vector<std::string>((std::istream_iterator<std::string>(iss)),
                                                std::istream_iterator<std::string>());
-            if (results.size() <= 5) systems[systems.size() - 1]->addPlanet(
+            if (results.size() <= 5)
+                systems[systems.size() - 1]->addPlanet(
                         new Planet(*planets[stoi(results[0])], stof(results[1]), window.getSize().x * stof(results[2]),
                                    window.getSize().y * stof(results[3]), stof(results[4])));
             else {
@@ -390,7 +391,7 @@ void Game::init() {
     inFile.open("./data/Explores.txt");
     while (std::getline(inFile, input)) {
         std::istringstream iss(input);
-        std::vector <std::string> results;
+        std::vector<std::string> results;
         iss = std::istringstream(input);
         results = std::vector<std::string>((std::istream_iterator<std::string>(iss)),
                                            std::istream_iterator<std::string>());
@@ -444,10 +445,8 @@ void Game::init() {
     sf::Vector2f oldPos;
     sf::Vector2f currentPos;
 
-    Ship *player = new Ship(ship, 50, window.getSize().x / (float) 2.0, window.getSize().y / (float) 2.0, 0, 10, -45, 2,
-                            3, 500, 100, 5);
-    player->addWeapon(new ProjectileWeapon(
-            Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+    Ship *player = new Ship(ship, 50, window.getSize().x / (float) 2.0, window.getSize().y / (float) 2.0, 0, 10, -45, 2,3, 500, 100, 5);
+    player->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), 25, 40));
     int playerMoney = 100000;
 
     System *currentSystem = systems[0];
@@ -568,13 +567,8 @@ void Game::init() {
         int randXpos = roll(gen);
         int randYpos = roll(gen);
 
-        ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],
-                                    currentSystem->getPlanets()[1]->getXPos() + randXpos,
-                                    currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0, 500, 0,
-                                    0, wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta, 15),
-                                    currentSystem->getSysRep()));
-        ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(
-                Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+        ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0, 500, 0,0, wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta, 15),currentSystem->getSysRep()));
+        ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
     }
 
     //planet pointer
@@ -938,12 +932,7 @@ void Game::init() {
 
                 if (res == COMShip::WARPING) {
                     sound.setBuffer(warp);
-                    sound.setVolume((GameSprite::distance(player->getPosition(), s->getPosition()) > 2000) ? 0 : 100 *
-                                                                                                                 (2000 -
-                                                                                                                  GameSprite::distance(
-                                                                                                                          player->getPosition(),
-                                                                                                                          s->getPosition())) /
-                                                                                                                 2000);
+                    sound.setVolume((GameSprite::distance(player->getPosition(), s->getPosition()) > 2000) ? 0 : 100 *(2000 -GameSprite::distance(player->getPosition(),s->getPosition())) /2000);
                     sound.play();
 
                     if (player->getTarget() == s) {
@@ -965,23 +954,11 @@ void Game::init() {
                 int randXpos = roll(gen);
                 int randYpos = roll(gen);
 
-                ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],
-                                            currentSystem->getPlanets()[1]->getXPos() + randXpos,
-                                            currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0,
-                                            500, 0, 0,
-                                            wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta,
-                                                     15),
-                                            currentSystem->getSysRep()));
-                ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(
-                        Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+                ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0,500, 0, 0,wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta,15),currentSystem->getSysRep()));
+                ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
 
                 sound.setBuffer(warp);
-                sound.setVolume(
-                        (GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition()) > 2000) ? 0
-                                                                                                                     :
-                        100 *
-                        (2000 - GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition())) /
-                        2000);
+                sound.setVolume((GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition()) > 2000) ? 0 : 100 * (2000 - GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition())) / 2000);
                 sound.play();
 
                 messageLog.push_front(new sf::Text("A ship entered the system.", oxan, 18));
@@ -1152,15 +1129,8 @@ void Game::init() {
                     int randXpos = roll(gen);
                     int randYpos = roll(gen);
 
-                    ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],
-                                                currentSystem->getPlanets()[1]->getXPos() + randXpos,
-                                                currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2,
-                                                0, 500, 0, 0,
-                                                wordWrap(generateName(gen), targetWindow.getGlobalBounds().width,
-                                                         monkirta, 15),
-                                                currentSystem->getSysRep()));
-                    ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(
-                            Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+                    ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2,0, 500, 0, 0,wordWrap(generateName(gen), targetWindow.getGlobalBounds().width,monkirta, 15),currentSystem->getSysRep()));
+                    ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
                 }
 
                 mainView.setCenter(player->getXPos(), player->getYPos());
@@ -1507,7 +1477,7 @@ void Game::init() {
 
         //delete old spritesadddd
         if (!projectiles.empty()) {
-            std::vector<Shootable*> forDelete;
+            std::vector<Shootable *> forDelete;
             for (Shootable *p : projectiles) {
                 if (p->isPastLifetime()) {
                     forDelete.push_back(p);
@@ -1527,8 +1497,8 @@ void Game::init() {
             /*********************************************
             * Event handling here.
             *********************************************/
-            sf::Vector2i mousePos = sf::Mouse::getPosition( window );
-            sf::Vector2f mousePosF( static_cast<float>( mousePos.x ), static_cast<float>( mousePos.y ) );
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            sf::Vector2f mousePosF(static_cast<float>( mousePos.x ), static_cast<float>( mousePos.y ));
             sf::Vector2f mousePosWorldF = window.mapPixelToCoords(mousePos);
 
             if (event.type == sf::Event::Closed) { // if event type is a closed event
@@ -1537,42 +1507,42 @@ void Game::init() {
             } else if (event.type == sf::Event::KeyReleased && landing == -9999 && jumping == -9999 && window.hasFocus()) {
                 sf::Vector2f tempPos;
                 switch (event.key.code) {
-                case sf::Keyboard::Key::M:
-                    if (!showPlanetDialog) {
-                        map = !map;
-                        tempPos = oldPos;
-                        if (map) oldPos = player->getPosition();
-                        else oldPos = currentPos;
-                        if (map)
-                            currentPos = sf::Vector2f(mainView.getSize().x / (float) 2, window.getSize().y / (float) 2);
-                        else currentPos = tempPos;
-                        player->setPosition(currentPos);
-                    }
-                    break;
-                case sf::Keyboard::Key::L:
-                    if (!showPlanetDialog && !map) {
-                        for (auto p : currentSystem->getPlanets()) {
-                            if ((GameSprite::distance(player->getPosition(), p->getPosition()) < p->getGlobalBounds().width / 2) && ((Planet *) p)->isLandable() && player->getVelocity() < 2) {
-                                landing = 100;
-                                landingPlanet = p;
-                                landingdx = player->getXPos() - p->getXPos();
-                                landingdy = player->getYPos() - p->getYPos();
-                                planetInfoTitle.setString(landingPlanet->getName());
-                                planetInfoTitle.setOrigin(planetInfoTitle.getGlobalBounds().width/2, planetInfoTitle.getGlobalBounds().height/2);
-                                planetInfoText.setString(landingPlanet->getDesc());
-                                planetDialogPic.setTexture(*images[landingPlanet->getImageNum()]);
-                                player->setVelocity(0);
+                    case sf::Keyboard::Key::M:
+                        if (!showPlanetDialog) {
+                            map = !map;
+                            tempPos = oldPos;
+                            if (map) oldPos = player->getPosition();
+                            else oldPos = currentPos;
+                            if (map)
+                                currentPos = sf::Vector2f(mainView.getSize().x / (float) 2, window.getSize().y / (float) 2);
+                            else currentPos = tempPos;
+                            player->setPosition(currentPos);
+                        }
+                        break;
+                    case sf::Keyboard::Key::L:
+                        if (!showPlanetDialog && !map) {
+                            for (auto p : currentSystem->getPlanets()) {
+                                if ((GameSprite::distance(player->getPosition(), p->getPosition()) < p->getGlobalBounds().width / 2) && ((Planet *) p)->isLandable() && player->getVelocity() < 2) {
+                                    landing = 100;
+                                    landingPlanet = p;
+                                    landingdx = player->getXPos() - p->getXPos();
+                                    landingdy = player->getYPos() - p->getYPos();
+                                    planetInfoTitle.setString(landingPlanet->getName());
+                                    planetInfoTitle.setOrigin(planetInfoTitle.getGlobalBounds().width / 2, planetInfoTitle.getGlobalBounds().height / 2);
+                                    planetInfoText.setString(landingPlanet->getDesc());
+                                    planetDialogPic.setTexture(*images[landingPlanet->getImageNum()]);
+                                    player->setVelocity(0);
+                                }
                             }
                         }
-                    }
-                    break;
-                case sf::Keyboard::Key::Escape:
-                    if (map) map = false;
+                        break;
+                    case sf::Keyboard::Key::Escape:
+                        if (map) map = false;
 
-                    if (showPlanetDialog){
-                        showPlanetDialog = false;
-                        landing = -100;
-                    }
+                        if (showPlanetDialog) {
+                            showPlanetDialog = false;
+                            landing = -100;
+                        }
                 }
             } else if (event.type == sf::Event::MouseButtonPressed) {
                 if (map) {
@@ -1612,9 +1582,9 @@ void Game::init() {
 
                             double scaleFactor;
                             if (fmax(player->getTarget()->getGlobalBounds().width, player->getTarget()->getGlobalBounds().height) == player->getTarget()->getGlobalBounds().width) {
-                                scaleFactor = (player->getLocalBounds().width * player->getScale().x * 0.8)/(player->getTarget()->getLocalBounds().width * player->getScale().x);
+                                scaleFactor = (player->getLocalBounds().width * player->getScale().x * 0.8) / (player->getTarget()->getLocalBounds().width * player->getScale().x);
                             } else {
-                                scaleFactor = (player->getLocalBounds().height * player->getScale().y * 0.8)/(player->getTarget()->getLocalBounds().height * player->getScale().y);
+                                scaleFactor = (player->getLocalBounds().height * player->getScale().y * 0.8) / (player->getTarget()->getLocalBounds().height * player->getScale().y);
                             }
 
                             targetShipTracker.setScale(scaleFactor, scaleFactor);
@@ -1636,21 +1606,21 @@ void Game::init() {
                     playBip();
                     musicOn = !musicOn;
                     if (!musicOn) neutralLoop.setVolume(0);
-                    else neutralLoop.setVolume((float)neutralVol);
-                } else if(yardButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) {
+                    else neutralLoop.setVolume((float) neutralVol);
+                } else if (yardButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) {
                     if (planetScreen != YARD) playBip();
                     else playErr();
 
                     planetScreen = YARD;
 
-                    int fuelCost = (player->getFuelCap() - player->getFuelRemaining())*1250;
-                    int hullCost = (player->getHullCap() - player->getHullRemaining())*15;
+                    int fuelCost = (player->getFuelCap() - player->getFuelRemaining()) * 1250;
+                    int hullCost = (player->getHullCap() - player->getHullRemaining()) * 15;
 
                     refuelFullCost.setString("Cost: $" + std::to_string(fuelCost));
-                    refuelFullCost.setOrigin(refuelFullCost.getGlobalBounds().width/2, refuelFullCost.getGlobalBounds().height/2);
+                    refuelFullCost.setOrigin(refuelFullCost.getGlobalBounds().width / 2, refuelFullCost.getGlobalBounds().height / 2);
 
                     repairFullCost.setString("Cost: $" + std::to_string(hullCost));
-                    repairFullCost.setOrigin(repairFullCost.getGlobalBounds().width/2, repairFullCost.getGlobalBounds().height/2);
+                    repairFullCost.setOrigin(repairFullCost.getGlobalBounds().width / 2, repairFullCost.getGlobalBounds().height / 2);
 
                     if (playerMoney > fuelCost && player->getFuelRemaining() < player->getFuelCap()) refuelFullButton.setColor(sf::Color::Green);
                     else refuelFullButton.setColor(sf::Color::White);
@@ -1658,12 +1628,12 @@ void Game::init() {
                     if (playerMoney > hullCost && player->getHullRemaining() < player->getHullCap()) repairFullButton.setColor(sf::Color::Green);
                     else repairFullButton.setColor(sf::Color::White);
                 } else if (refuelRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) {
-                    int fuelCost = (player->getFuelCap() - player->getFuelRemaining())*1250;
+                    int fuelCost = (player->getFuelCap() - player->getFuelRemaining()) * 1250;
 
                     if (playerMoney >= fuelCost && player->getFuelRemaining() < player->getFuelCap()) {
                         playBip();
                         player->setFuel(player->getFuelCap());
-                        fuelLevel.setTextureRect(sf::IntRect(origGaugeRect.left, origGaugeRect.top, origGaugeRect.width/(float)player->getFuelCap() * (float)player->getFuelRemaining(), origGaugeRect.height));
+                        fuelLevel.setTextureRect(sf::IntRect(origGaugeRect.left, origGaugeRect.top, origGaugeRect.width / (float) player->getFuelCap() * (float) player->getFuelRemaining(), origGaugeRect.height));
 
                         playerMoney -= fuelCost;
                         moneyText.setString("$" + std::to_string(playerMoney));
@@ -1672,7 +1642,7 @@ void Game::init() {
                         else refuelFullButton.setColor(sf::Color::White);
 
                         refuelFullCost.setString("Cost: $0");
-                        refuelFullCost.setOrigin(refuelFullCost.getGlobalBounds().width/2, refuelFullCost.getGlobalBounds().height/2);
+                        refuelFullCost.setOrigin(refuelFullCost.getGlobalBounds().width / 2, refuelFullCost.getGlobalBounds().height / 2);
                     } else playErr();
                 } else if (repairRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) {
                     int hullCost = (player->getHullCap() - player->getHullRemaining()) * 15;
@@ -1691,7 +1661,7 @@ void Game::init() {
                     playBip();
 
                     if (!(currentSystem->getStren() == 0 && currentSystem->getPop() == 0)) {
-                        roll = std::uniform_int_distribution<int>(ceil(currentSystem->getPop()/3), ceil(currentSystem->getPop()*1.5));
+                        roll = std::uniform_int_distribution<int>(ceil(currentSystem->getPop() / 3), ceil(currentSystem->getPop() * 1.5));
                         int message = roll(gen);
 
                         planetInfoText.setString(wordWrap(explores[message]->getMessage(), 305, oxan, 15));
@@ -1703,10 +1673,10 @@ void Game::init() {
                     planetScreen = TASKS;
 
                     for (int i = 0; i < missionAccepts.size(); i++) {
-                        missionButtons[i]->setPosition(missions[2*i]->getPosition().x + mainView.getSize().x / (float) 4.65,
-                                                       missions[2*i]->getPosition().y + missionButtons[i]->getGlobalBounds().height/1.75);
+                        missionButtons[i]->setPosition(missions[2 * i]->getPosition().x + mainView.getSize().x / (float) 4.65,
+                                                       missions[2 * i]->getPosition().y + missionButtons[i]->getGlobalBounds().height / 1.75);
 
-                        missionSizes[i]->setPosition(missions[2*i+1]->getPosition().x + 75, missions[2*i+1]->getPosition().y);
+                        missionSizes[i]->setPosition(missions[2 * i + 1]->getPosition().x + 75, missions[2 * i + 1]->getPosition().y);
 
                         missionAccepts[i]->setPosition(missionButtons[i]->getPosition().x,
                                                        missionButtons[i]->getPosition().y -
@@ -1742,7 +1712,7 @@ void Game::init() {
                                         if ((currentSystem->getTasks()[j]->getType() == Task::DELIVERY && delivTotal > player->getCargoSpace()) || (currentSystem->getTasks()[j]->getType() == Task::TAXI && passTotal > player->getPassengerSpace())) {
                                             missionButtons[j]->setColor(sf::Color::White);
                                             missionAccepts[j]->setString("Too Full");
-                                            missionAccepts[j]->setOrigin(missionAccepts[j]->getGlobalBounds().width/2, missionAccepts[j]->getGlobalBounds().height/2 + 2);
+                                            missionAccepts[j]->setOrigin(missionAccepts[j]->getGlobalBounds().width / 2, missionAccepts[j]->getGlobalBounds().height / 2 + 2);
                                         }
                                     }
                                 }
@@ -1765,7 +1735,7 @@ void Game::init() {
                                         if ((currentSystem->getTasks()[j]->getType() == Task::DELIVERY && delivTotal <= player->getCargoSpace()) || (currentSystem->getTasks()[j]->getType() == Task::TAXI && passTotal <= player->getPassengerSpace())) {
                                             missionButtons[j]->setColor(sf::Color::Green);
                                             missionAccepts[j]->setString("Accept");
-                                            missionAccepts[j]->setOrigin(missionAccepts[j]->getGlobalBounds().width/2, missionAccepts[j]->getGlobalBounds().height/2);
+                                            missionAccepts[j]->setOrigin(missionAccepts[j]->getGlobalBounds().width / 2, missionAccepts[j]->getGlobalBounds().height / 2);
                                         }
                                     }
                                 }
@@ -1785,7 +1755,7 @@ void Game::init() {
                 playedErr = false;
             } else if (event.type == sf::Event::MouseMoved) {
                 for (int i = 0; i < missionButtons.size(); i++) {
-                    if (missionButtonFilters[i]->getGlobalBounds().contains(mousePosF)) missionButtonFilters[i]->setFillColor(sf::Color(0,0,0,100));
+                    if (missionButtonFilters[i]->getGlobalBounds().contains(mousePosF)) missionButtonFilters[i]->setFillColor(sf::Color(0, 0, 0, 100));
                 }
 
                 if (departButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) departButton.setColor(sf::Color::Red);
@@ -1796,8 +1766,8 @@ void Game::init() {
                 else if (treasuryButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) treasuryButton.setColor(sf::Color::Red);
                 else if (capitalButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) capitalButton.setColor(sf::Color::Red);
                 else if (lodgeButton.getGlobalBounds().contains(mousePosF) && showPlanetDialog) lodgeButton.setColor(sf::Color::Red);
-                else if (refuelRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) refuelRect.setFillColor(sf::Color(0,0,0, 100));
-                else if (repairRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) repairRect.setFillColor(sf::Color(0,0,0, 100));
+                else if (refuelRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) refuelRect.setFillColor(sf::Color(0, 0, 0, 100));
+                else if (repairRect.getGlobalBounds().contains(mousePosF) && showPlanetDialog && planetScreen == YARD) repairRect.setFillColor(sf::Color(0, 0, 0, 100));
                 else if (soundButton.getGlobalBounds().contains(mousePosF) && soundOn && showPlanetDialog) soundButton.setColor(sf::Color::Red);
                 else if (musicButton.getGlobalBounds().contains(mousePosF) && musicOn && showPlanetDialog) musicButton.setColor(sf::Color::Red);
                 else if (soundButton.getGlobalBounds().contains(mousePosF) && !soundOn && showPlanetDialog) soundButton.setColor(sf::Color::White);
@@ -1824,8 +1794,7 @@ void Game::init() {
                             }
                             sysPopText.setString(std::to_string(systems[i]->getPop()) + " billion");
                             sysStrenText.setString(std::to_string(systems[i]->getStren()));
-                        }
-                        else {
+                        } else {
                             sysInfoTitle.setString("???");
                             sysStatusText.setString("Unexplored");
                             sysStatusText.setFillColor(sf::Color::White);
@@ -1835,12 +1804,12 @@ void Game::init() {
                             sysStrenText.setString("???");
                         }
 
-                        sysInfoTitle.setOrigin(sysInfoTitle.getGlobalBounds().width/2, sysInfoTitle.getGlobalBounds().height/2);
+                        sysInfoTitle.setOrigin(sysInfoTitle.getGlobalBounds().width / 2, sysInfoTitle.getGlobalBounds().height / 2);
 
                         if (systems[i]->getRelativeMapPos().x >= 0.5) {
                             sysInfoBox.setOrigin(0, 0);
-                            sysInfoBox.setPosition(window.getSize().x/(float)10, window.getSize().y/(float)5);
-                            sysInfoTitle.setPosition(sysInfoBox.getXPos() + sysInfoBox.getGlobalBounds().width/2, sysInfoBox.getYPos() + sysInfoTitle.getGlobalBounds().height/(float)1.3);
+                            sysInfoBox.setPosition(window.getSize().x / (float) 10, window.getSize().y / (float) 5);
+                            sysInfoTitle.setPosition(sysInfoBox.getXPos() + sysInfoBox.getGlobalBounds().width / 2, sysInfoBox.getYPos() + sysInfoTitle.getGlobalBounds().height / (float) 1.3);
                             sysStatus.setPosition(sysInfoBox.getXPos() + 15, sysInfoTitle.getPosition().y + 37);
                             sysGov.setPosition(sysInfoBox.getXPos() + 15, sysStatus.getPosition().y + sysGov.getGlobalBounds().height + 6);
                             sysRep.setPosition(sysInfoBox.getXPos() + 15, sysGov.getPosition().y + sysRep.getGlobalBounds().height + 4);
@@ -1848,8 +1817,8 @@ void Game::init() {
                             sysStren.setPosition(sysInfoBox.getXPos() + 15, sysPop.getPosition().y + sysStren.getGlobalBounds().height + 3);
                         } else {
                             sysInfoBox.setOrigin(sysInfoBox.getLocalBounds().width, 0);
-                            sysInfoBox.setPosition(window.getSize().x - window.getSize().x/(float)10, window.getSize().y/(float)5);
-                            sysInfoTitle.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width/2, sysInfoBox.getYPos() + sysInfoTitle.getGlobalBounds().height/(float)1.3);
+                            sysInfoBox.setPosition(window.getSize().x - window.getSize().x / (float) 10, window.getSize().y / (float) 5);
+                            sysInfoTitle.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width / 2, sysInfoBox.getYPos() + sysInfoTitle.getGlobalBounds().height / (float) 1.3);
                             sysStatus.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width + 15, sysInfoTitle.getPosition().y + 37);
                             sysGov.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width + 15, sysStatus.getPosition().y + sysGov.getGlobalBounds().height + 6);
                             sysRep.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width + 15, sysGov.getPosition().y + sysRep.getGlobalBounds().height + 4);
@@ -1857,11 +1826,11 @@ void Game::init() {
                             sysStren.setPosition(sysInfoBox.getXPos() - sysInfoBox.getGlobalBounds().width + 15, sysPop.getPosition().y + sysStren.getGlobalBounds().height + 3);
                         }
 
-                        sysStatusText.setPosition(sysStatus.getPosition().x + sysStatus.getGlobalBounds().width, sysStatus.getPosition().y + sysStatusText.getGlobalBounds().height/(float)2.75);
-                        sysGovText.setPosition(sysGov.getPosition().x + sysGov.getGlobalBounds().width, sysGov.getPosition().y + sysGovText.getGlobalBounds().height/(float)2.75);
-                        sysRepText.setPosition(sysRep.getPosition().x + sysRep.getGlobalBounds().width, sysRep.getPosition().y + sysRepText.getGlobalBounds().height/(float)2.75);
-                        sysPopText.setPosition(sysPop.getPosition().x + sysPop.getGlobalBounds().width, sysPop.getPosition().y + sysPopText.getGlobalBounds().height/(float)2.75);
-                        sysStrenText.setPosition(sysStren.getPosition().x + sysStren.getGlobalBounds().width, sysStren.getPosition().y + sysStrenText.getGlobalBounds().height/(float)2.75);
+                        sysStatusText.setPosition(sysStatus.getPosition().x + sysStatus.getGlobalBounds().width, sysStatus.getPosition().y + sysStatusText.getGlobalBounds().height / (float) 2.75);
+                        sysGovText.setPosition(sysGov.getPosition().x + sysGov.getGlobalBounds().width, sysGov.getPosition().y + sysGovText.getGlobalBounds().height / (float) 2.75);
+                        sysRepText.setPosition(sysRep.getPosition().x + sysRep.getGlobalBounds().width, sysRep.getPosition().y + sysRepText.getGlobalBounds().height / (float) 2.75);
+                        sysPopText.setPosition(sysPop.getPosition().x + sysPop.getGlobalBounds().width, sysPop.getPosition().y + sysPopText.getGlobalBounds().height / (float) 2.75);
+                        sysStrenText.setPosition(sysStren.getPosition().x + sysStren.getGlobalBounds().width, sysStren.getPosition().y + sysStrenText.getGlobalBounds().height / (float) 2.75);
                     }
                 }
             }
@@ -1883,12 +1852,12 @@ void Game::init() {
             if (!musicButton.getGlobalBounds().contains(mousePosF) && musicOn) musicButton.setColor(sf::Color::White);
             if (!soundButton.getGlobalBounds().contains(mousePosF) && !soundOn) soundButton.setColor(sf::Color::Red);
             if (!musicButton.getGlobalBounds().contains(mousePosF) && !musicOn) musicButton.setColor(sf::Color::Red);
-            if (!refuelRect.getGlobalBounds().contains(mousePosF)) refuelRect.setFillColor(sf::Color(0,0,0,0));
-            if (!repairRect.getGlobalBounds().contains(mousePosF)) repairRect.setFillColor(sf::Color(0,0,0,0));
+            if (!refuelRect.getGlobalBounds().contains(mousePosF)) refuelRect.setFillColor(sf::Color(0, 0, 0, 0));
+            if (!repairRect.getGlobalBounds().contains(mousePosF)) repairRect.setFillColor(sf::Color(0, 0, 0, 0));
 
             for (int i = 0; i < missionButtons.size(); i++) {
                 if (!missionButtonFilters[i]->getGlobalBounds().contains(mousePosF)) {
-                    missionButtonFilters[i]->setFillColor(sf::Color(0,0,0,0));
+                    missionButtonFilters[i]->setFillColor(sf::Color(0, 0, 0, 0));
                 }
             }
         }
@@ -1922,15 +1891,15 @@ void Game::updateLoader(sf::RenderWindow &window, const std::string &msg = "") {
     GameSprite barFull(loadingBarFull, 100);
     barFull.setScale(1.1, 0.87);
     sf::FloatRect fullBarRect = barFull.getLocalBounds();
-    barFull.setOrigin(fullBarRect.width/2, fullBarRect.height/2);
+    barFull.setOrigin(fullBarRect.width / 2, fullBarRect.height / 2);
 
-    barEmpty.setPosition(window.getSize().x/(float)2, window.getSize().y/(float)2);
+    barEmpty.setPosition(window.getSize().x / (float) 2, window.getSize().y / (float) 2);
     barFull.setPosition(barEmpty.getPosition().x, barEmpty.getPosition().y);
-    barFull.setTextureRect(sf::IntRect(fullBarRect.left, fullBarRect.top, fullBarRect.width/(float)totalTextures * (float)loadedTextures, fullBarRect.height));
+    barFull.setTextureRect(sf::IntRect(fullBarRect.left, fullBarRect.top, fullBarRect.width / (float) totalTextures * (float) loadedTextures, fullBarRect.height));
 
     sf::Text loadingMessage(msg, oxan, 15);
-    loadingMessage.setOrigin(loadingMessage.getGlobalBounds().width/2, loadingMessage.getGlobalBounds().height/2);
-    loadingMessage.setPosition(window.getSize().x/2, window.getSize().y/2 + 50);
+    loadingMessage.setOrigin(loadingMessage.getGlobalBounds().width / 2, loadingMessage.getGlobalBounds().height / 2);
+    loadingMessage.setPosition(window.getSize().x / 2, window.getSize().y / 2 + 50);
     //auto stop = std::chrono::high_resolution_clock::now();
     //auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     //std::cout << duration.count() << " microseconds" << std::endl;
@@ -1957,7 +1926,7 @@ void Game::readNameComponents() {
     craftNameNameComponents = readFileLines("./data/Ship Names/Spacecraft Names.txt");
 }
 
-template < class RNG >
+template<class RNG>
 std::string Game::generateName(RNG &gen) {
     //TODO: things you can be of
     std::string name;
