@@ -24,7 +24,7 @@ public:
 
     void update();
 
-    void shoot(std::vector<Shootable*> &projectiles);
+    virtual void shoot(std::vector<Shootable*> &projectiles);
 
     float getTurnRate() const;
 

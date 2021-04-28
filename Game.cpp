@@ -192,13 +192,21 @@ void Game::init() {
         updateLoader(window, "Loading ship textures...");
     }
 
-    //Load projectile textures
+    //Load projectile textures and sounds
     sf::Texture laser;
     Collision::CreateTextureAndBitmask(laser, "./data/Projectiles/laser.png");
+
+    sf::Sound laserNoise;
+    sf::SoundBuffer laserBuffer;
+    laserBuffer.loadFromFile("./data/Sounds/Projectiles/laser.wav");
 
     sf::Texture beam;
     Collision::CreateTextureAndBitmask(beam, "./data/Projectiles/beam.png");
     beam.setRepeated(true);
+
+    sf::Sound beamNoise;
+    sf::SoundBuffer beamBuffer;
+    beamBuffer.loadFromFile("./data/Sounds/Projectiles/beam.wav");
 
     //load GUI textures
     sf::Texture mapWin;
@@ -446,7 +454,7 @@ void Game::init() {
     sf::Vector2f currentPos;
 
     Ship *player = new Ship(ship, 50, window.getSize().x / (float) 2.0, window.getSize().y / (float) 2.0, 0, 10, -45, 2,3, 500, 100, 5);
-    player->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), 25, 40));
+    player->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), beamBuffer, 50, 360 , 25, 40));
     int playerMoney = 100000;
 
     System *currentSystem = systems[0];
@@ -568,7 +576,7 @@ void Game::init() {
         int randYpos = roll(gen);
 
         ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0, 500, 0,0, wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta, 15),currentSystem->getSysRep()));
-        ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+        ships[ships.size() - 1]->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), beamBuffer, 50, 360 , 25, 40));
     }
 
     //planet pointer
@@ -955,7 +963,7 @@ void Game::init() {
                 int randYpos = roll(gen);
 
                 ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2, 0,500, 0, 0,wordWrap(generateName(gen), targetWindow.getGlobalBounds().width, monkirta,15),currentSystem->getSysRep()));
-                ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+                ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), laserBuffer, 50, 10, 40));
 
                 sound.setBuffer(warp);
                 sound.setVolume((GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition()) > 2000) ? 0 : 100 * (2000 - GameSprite::distance(player->getPosition(), ships[ships.size() - 1]->getPosition())) / 2000);
@@ -1130,7 +1138,7 @@ void Game::init() {
                     int randYpos = roll(gen);
 
                     ships.push_back(new COMShip(*shipTextures[n], shipTextureScales[n],currentSystem->getPlanets()[1]->getXPos() + randXpos,currentSystem->getPlanets()[1]->getYPos() + randYpos, 0, 0.1, 10, 0, 2,0, 500, 0, 0,wordWrap(generateName(gen), targetWindow.getGlobalBounds().width,monkirta, 15),currentSystem->getSysRep()));
-                    ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), 40));
+                    ships[ships.size() - 1]->addWeapon(new ProjectileWeapon(Projectile(laser, sf::IntRect(29, 207, 651, 91), 10, 4, 3, 676, 513, 3, 15, 25, 1500), laserBuffer, 10, 50, 40));
                 }
 
                 mainView.setCenter(player->getXPos(), player->getYPos());

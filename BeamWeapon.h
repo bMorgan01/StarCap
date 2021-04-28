@@ -12,17 +12,19 @@ private:
     int duration;
     int framesShot = 0;
 public:
-    BeamWeapon(Beam _proj, int _duration, int frameDelay) : Weapon(frameDelay) {
+    BeamWeapon(Beam _proj, const sf::SoundBuffer& buffer, float volume, double effectiveAngle, int _duration, int frameDelay) : Weapon(frameDelay, effectiveAngle, buffer, volume) {
         projectile = std::move(_proj);
         duration = _duration;
     }
 
-    Shootable* shoot(const Ship* shooter) {
+    Shootable* shoot(const Ship* shooter) override {
         framesShot++;
         if (framesShot == duration) {
             framesShot = 0;
             currentFrame = 0;
         }
+
+        noise.play();
 
         projectile.setShooter((GameSprite *) shooter);
         double newWidth = shooter->getTarget() == nullptr ? projectile.getRange() : GameSprite::distance(shooter->getPosition(), shooter->getTarget()->getPosition());

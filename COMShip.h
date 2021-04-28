@@ -34,6 +34,18 @@ public:
         name = std::move(_name);
     };
 
+    void shoot(std::vector<Shootable*> &shots) override {
+        for (Weapon *w : weapons) {
+            double angle = -getAimAngle(target->getPosition(), getPosition());
+            double leftEffectiveBorder = spritePhysics.direction + w->getEffectiveAngle()/2;
+            double rightEffectiveBorder = spritePhysics.direction - w->getEffectiveAngle()/2;
+
+            if (w->canShoot() && ( angle < leftEffectiveBorder && angle > rightEffectiveBorder) && distance(target->getPosition(), getPosition()) < w->getProjectile().getRange()) {
+                shots.push_back(w->shoot(this));
+            }
+        }
+    }
+
     template< class RNG >
     Status pathfind(const sf::RenderWindow &window, RNG &gen, System *loc, Ship* player, std::vector<Shootable*> &projectiles) {
         if (status != ATTACKING && isHostile()) {
