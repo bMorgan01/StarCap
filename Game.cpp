@@ -566,7 +566,7 @@ void Game::init() {
     for (auto s : ships) delete s;
     ships.clear();
     roll = std::uniform_int_distribution<int>(ceil(currentSystem->getPop() / 3), ceil(currentSystem->getPop() * 1.5));
-    int numShips = roll(gen);
+    int numShips = 2;//roll(gen);
 
     for (int i = 0; i < numShips; i++) {
         roll = std::uniform_int_distribution<int>(0, shipTextures.size() - 1);
@@ -872,14 +872,34 @@ void Game::init() {
                 s->update();
             }
 
+            player->update();
+
+            for (COMShip *s : ships) {
+                COMShip::Status res = s->pathfind(window, gen, currentSystem, player, projectiles);
+                s->update();
+
+                if (res == COMShip::WARPING) {
+                    sound.setBuffer(warp);
+                    sound.setVolume((GameSprite::distance(player->getPosition(), s->getPosition()) > 2000) ? 0 : 100 *(2000 -GameSprite::distance(player->getPosition(),s->getPosition())) /2000);
+                    sound.play();
+
+                    if (player->getTarget() == s) {
+                        player->setTarget(nullptr);
+                    }
+
+                    delete s;
+                    ships.erase(std::find(ships.begin(), ships.end(), s));
+
+                    messageLog.push_front(new sf::Text("A ship left the system.", oxan, 18));
+                }
+            }
+
             for (Shootable *p : projectiles) {
                 bool deleted = false;
                 p->update();
 
                 for (Ship *s : ships) {
-                    if ((Collision::PixelPerfectTest(*p, *s) ||
-                         (p->getLifetime() == 1 && p->getPosition() == p->getShooter()->getPosition())) &&
-                        p->getShooter()->getTarget() == s) {
+                    if (p->getShooter()->getTarget() == s && ((p->getLifetime() == 1 && p->getGlobalBounds().intersects(s->getGlobalBounds())) || Collision::PixelPerfectTest(*p, *s))) {
                         s->setHull(s->getHullRemaining() - p->getDamage());
 
                         for (COMShip *s : ships) {
@@ -910,9 +930,7 @@ void Game::init() {
 
                 if (deleted) break;
 
-                if ((Collision::PixelPerfectTest(*p, *player) ||
-                     (p->getLifetime() == 1 && p->getPosition() == p->getShooter()->getPosition())) &&
-                    p->getShooter()->getTarget() == player) {
+                if (p->getShooter()->getTarget() == player && ((p->getLifetime() == 1 && p->getGlobalBounds().intersects(player->getGlobalBounds())) || Collision::PixelPerfectTest(*p, *player))) {
                     player->setHull(player->getHullRemaining() - p->getDamage());
                     hullLevel.setTextureRect(sf::IntRect(origGaugeRect.left, origGaugeRect.top,
                                                          origGaugeRect.width / (float) player->getHullCap() *
@@ -930,27 +948,6 @@ void Game::init() {
                     }
 
                     break;
-                }
-            }
-            player->update();
-
-            for (COMShip *s : ships) {
-                COMShip::Status res = s->pathfind(window, gen, currentSystem, player, projectiles);
-                s->update();
-
-                if (res == COMShip::WARPING) {
-                    sound.setBuffer(warp);
-                    sound.setVolume((GameSprite::distance(player->getPosition(), s->getPosition()) > 2000) ? 0 : 100 *(2000 -GameSprite::distance(player->getPosition(),s->getPosition())) /2000);
-                    sound.play();
-
-                    if (player->getTarget() == s) {
-                        player->setTarget(nullptr);
-                    }
-
-                    delete s;
-                    ships.erase(std::find(ships.begin(), ships.end(), s));
-
-                    messageLog.push_front(new sf::Text("A ship left the system.", oxan, 18));
                 }
             }
 
@@ -1483,21 +1480,19 @@ void Game::init() {
 
         window.display();                       // display the window
 
-        //delete old spritesadddd
-        if (!projectiles.empty()) {
-            std::vector<Shootable *> forDelete;
-            for (Shootable *p : projectiles) {
-                if (p->isPastLifetime()) {
-                    forDelete.push_back(p);
-                }
+        //delete old sprites
+        std::vector<Shootable*> forDelete;
+        for (Shootable *p : projectiles) {
+            if ((p->getLifetime() == 1) || p->isPastLifetime()) {
+                forDelete.push_back(p);
             }
-
-            for (Shootable *p : forDelete) {
-                projectiles.erase(std::find(projectiles.begin(), projectiles.end(), p));
-                delete p;
-            }
-            forDelete.clear();
         }
+
+        for (Shootable *p: forDelete) {
+            projectiles.erase(std::find(projectiles.begin(), projectiles.end(), p));
+            delete p;
+        }
+        forDelete.clear();
 
         sf::Event event{};
         while (window.pollEvent(event)) {      // ask the window if any events occurred

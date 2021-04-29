@@ -59,9 +59,7 @@ public:
 
         if (status == ATTACKING) {
             if (target != nullptr) {
-                dogFight(getShortestWeaponRange(), target);
-
-                shoot(projectiles);
+                dogFight(getShortestWeaponRange(), target, projectiles);
             } else {
                 status = MOVING;
             }
@@ -83,7 +81,7 @@ public:
         return status;
     }
 
-    void dogFight(double dist, Ship *target) {
+    void dogFight(double dist, Ship *target, std::vector<Shootable*> &projectiles) {
         destination = target->getPosition();
 
         if (distance(getPosition(), target->getPosition()) > dist) targetVelo = spritePhysics.maxVelocity;
@@ -91,6 +89,8 @@ public:
 
         turnTowardsTarget();
         approachTargetVelocity();
+
+        shoot(projectiles);
     }
 
     double getShortestWeaponRange() {
