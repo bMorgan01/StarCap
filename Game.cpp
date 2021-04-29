@@ -454,7 +454,7 @@ void Game::init() {
     sf::Vector2f currentPos;
 
     Ship *player = new Ship(ship, 50, window.getSize().x / (float) 2.0, window.getSize().y / (float) 2.0, 0, 10, -45, 2,3, 500, 100, 5);
-    player->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), beamBuffer, 50, 360 , 25, 40));
+    player->addWeapon(new BeamWeapon(Beam(beam, sf::IntRect(0, 207, 535, 91), 10, 12, 1, 0, 513, 3, 1, 1500), beamBuffer, 100, 360 , 25, 40));
     int playerMoney = 100000;
 
     System *currentSystem = systems[0];
